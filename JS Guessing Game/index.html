@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JS Guessing Game | Taha Akyuz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script>
+
+        // JavaScript Guessing Game
+        // Taha Akyuz
+        // Due 9/8/25
+        // This webpage has a guessing game that gives you 7 attempts to guess the right number. Everytime you make a guess, it tells you if your guess is too high or too low. Click the reset button to restart/play again.
+        // You can change the constants MIN, MAX, and GUESSES to customize the game to your liking.
+
+        const MAX = 1000; // Init constant MAX with value 100
+        const MIN = 1; // Init constant MIN with value 1
+        const GUESSES = 12; // Init constant GUESSES with value 7
+        let guessesLeft = 0; // Init variable guessesLeft with value 7
+        let winningNumber = 0; // Init variable winningNumber with value 0
+        let userGuess = 0; // Init variable userGuess with value 0
+
+        function init() { // Init function init(). This function runs when the page loads and when the user clicks the Reset/Play Again button. It sets everything up for a new round.
+            guessesLeft = GUESSES; // Write value 7 to guessesLeft
+            document.getElementById("submitBtn").disabled = false; // Re-enable the button if it was disabled before
+            document.getElementById("resetBtn").innerHTML = "Reset"; // Change the button label back to Reset from Play Again
+            document.getElementById("guessCounter").innerHTML = guessesLeft; // Write the value of guessesLeft to paragraph with id=guessCounter to show the user how many guesses they have left
+            document.getElementById("history").innerHTML = ""; // Clear the guess history from previous rounds
+            document.getElementById("alert").innerHTML = ""; // Clear the alert for the new round
+            document.getElementById("guess").setAttribute("placeholder", `Your guess: ${MIN}-${MAX}`);
+            document.getElementById("inputLabel").innerHTML = `Your guess: ${MIN}-${MAX}`;
+            winningNumber = randomNumGen(MIN, MAX); // Call function randomNumGen and write the value it returns to variable winningNumber
+        }
+
+        function guessSubmit() { // Init function guessSubmit(). This function runs when the user clicks the submit button. It gets the value the user put into the input box and then calls another function to evaluate the guess.
+            userGuess = document.getElementById("guess").value; // Retrieve the number the user put in the text box
+            evaluateGuess(userGuess); // Pass the user's guess to the evaluateGuess() function
+            document.getElementById("guess").value = ""; // Clear the input box to prepare it for the next guess
+        }
+
+        function evaluateGuess(guess) { // Init function evaluateGuess(). This function is called by the guessSubmit function to evaluate the user's guess.
+            if (guess == '') { // If the user clicks submit without putting in a number...
+                return; // ...nothing happens. guessLeft isn't decremented and the history also remains unchanged.
+            } else { 
+                if (guessesLeft > 0) { // If the user has more than 0 guesses remaining...
+                    if (guess >= MIN && guess <= MAX) { // If the user's guess is in the valid range of possible guesses...
+                        document.getElementById("guessCounter").innerHTML = --guessesLeft; // ...decrement guessLeft
+                        if (guess > winningNumber) { // If the user's guess is higher than the winningNumber...
+                            document.getElementById("alert").innerHTML = `${guess} is too high!`; // Update the paragraph with id=alert to tell the user they guessed to high
+                            document.getElementById("history").innerHTML += `<br>${userGuess} (Too high!)`; // Update the paragraph with id=history and add the guess 
+                        } else if (guess < winningNumber) { // If the user's guess is lower than the winningNumber...
+                            document.getElementById("alert").innerHTML = `${guess} is too low!`; // Update the paragraph with id=alert to tell the user they guessed to low
+                            document.getElementById("history").innerHTML += `<br>${userGuess} (Too low!)`; // Update the paragraph with id=history and add the guess 
+                        } else if (guess = winningNumber) { // If the user's guess is equal to the winningNumber...
+                            document.getElementById("alert").innerHTML = `You win! The winning number was ${winningNumber}.`; // Update the paragraph with id=alert to tell the user they guessed correctly
+                            document.getElementById("history").innerHTML += `<br>${userGuess} (Winner!)`; // Update the paragraph with id=history and add the guess 
+                            document.getElementById("resetBtn").innerHTML = "Play Again"; // Change the Reset button label to Play Again
+                        } else { // If the user enters something other than a number...
+                        document.getElementById("alert").innerHTML = "Please enter a number."; // Update the paragraph with id=alert to tell the user to enter a number
+                        }
+                    } else { // If the user's guess is not in the valid range of possible guesses...
+                        document.getElementById("alert").innerHTML = `Guess a number between ${MIN} and ${MAX}.`; // Update the paragraph with id=alert to tell the user the range of numbers they can guess
+                    }
+                } else { // If the user has no guesses remaining...
+                    document.getElementById("alert").innerHTML = `You lose. The winning number was ${winningNumber}.`; // Update the paragraph with id=alert to tell the user they lost
+                    document.getElementById("submitBtn").disabled = true; // Disable the submit button so the user can't keep guessing after they've lost
+                    document.getElementById("resetBtn").innerHTML = "Play Again"; // Change the Reset button label to Play Again
+                }
+            }
+        }
+        
+        function randomNumGen(min, max) { // Init function randomNumGen(). This function generates a random number between the two parameters given.
+            return Math.floor(Math.random() * (max-min)) + min;
+        }
+    </script>
+</head>
+
+<body onLoad="init();"> <!-- When the page finishes loading, call the init() function -->
+    <div class="p-5 bg-primary text-white text-center">
+        <h1>JavaScript Guessing Game</h1>
+    </div>
+    <div class="row text-center">
+        <div class="col-sm-4">
+            <p class="fs-1">Past guesses:</p>
+            <p class="fs-2" id="history"></p>
+        </div>
+        <div class="col-sm-4">
+            <p class="fs-1">Take a guess...</p>
+            <div class="form-group">
+                <label for="guess" class="visually-hidden" id="inputLabel"></label>
+                <input type="number" class="form-control mb-4" id="guess" placeholder="">
+            </div>
+            <button class="btn btn-primary mb-4" id="submitBtn" onClick="guessSubmit();">Submit</button> <!-- When the user clicks the button, call the guessSubmit() function -->
+            <div class="text-center">
+                <button class="btn btn-primary" id="resetBtn" onClick="init(); ">Reset</button> <!-- When the user clicks the button, call the init() function -->
+            </div>
+            <p class="fs-1" id="alert"></p>
+        </div>
+        <div class="col-sm-4">
+            <p class="fs-1">Guesses left:</p>
+            <p class="fs-2" id="guessCounter"></p>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

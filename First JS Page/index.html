@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My First JS Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script>
+
+        // Function name: changeText
+        // This function targets the elements with the IDs: text0, text1, and text2. Then it uses innerHTML to change the text shown in each text box.
+
+        function changeText() {
+            document.getElementById('text0').innerHTML = "<b>Exciting,</b>";
+            document.getElementById('text1').innerHTML = "<b>new</b>";
+            document.getElementById('text2').innerHTML = "<b>text! :D</b>";
+        }
+    </script>
+</head>
+
+<!-- Taha Akyuz -->
+<!-- Due Fri 9/5/25 -->
+<!-- This page shows how JavaScript can be used to modify static HTML elemnets to make dynamic web pages. -->
+
+<body>
+    <div class="p-5 bg-primary text-white text-center">
+        <h1>My First JavaScript Page!</h1>
+    </div>
+    <div class="row text-center">
+        <div class="col-lg-4 fs-1">
+            <p id="text0">Boring,</p>    
+        </div>
+        <div class="col-lg-4 fs-1">
+            <p id="text1">old</p>
+        </div>
+        <div class="col-lg-4 fs-1">
+            <p id="text2">text. :(</p>
+        </div>
+    </div>
+    <div class="text-center">
+        <button class="btn btn-primary" onClick="changeText();">Click me!</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>
