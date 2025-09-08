@@ -23,21 +23,60 @@
         let winningNumber = 0; // Init variable winningNumber with value 0
         let userGuess = 0; // Init variable userGuess with value 0
 
+        // Init element variables. I would have made these constants but I need to assign their values after the page has loaded or it can't find the elements, and I also need it to be global.
+        let SUBMIT_BTN_EL = '';
+        let GUESS_EL = '';
+        let RESET_BTN_EL = '';
+        let GUESS_COUNTER_EL = '';
+        let HISTORY_EL = '';
+        let ALERT_EL = '';
+        let INPUT_LABEL_EL = '';
+
         //
         // New function: init()
         //
         //      Runs when the page loads and when the user clicks the Reset/Play Again button. It sets everything up for a new round.
 
         function init() {
+            
+            // Assign the document.getElementById() of each element to make code easier to read
+            SUBMIT_BTN_EL = document.getElementById("submitBtn");
+            GUESS_EL = document.getElementById("guess");
+            RESET_BTN_EL = document.getElementById("resetBtn");
+            GUESS_COUNTER_EL = document.getElementById("guessCounter");
+            HISTORY_EL = document.getElementById("history");
+            ALERT_EL = document.getElementById("alert");
+            INPUT_LABEL_EL = document.getElementById("inputLabel");
+
             guessesLeft = GUESSES; // Write value 7 to guessesLeft
-            document.getElementById("submitBtn").disabled = false; // Re-enable the button if it was disabled before
-            document.getElementById("resetBtn").innerHTML = "Reset"; // Change the button label back to Reset from Play Again
-            document.getElementById("guessCounter").innerHTML = guessesLeft; // Write the value of guessesLeft to paragraph with id=guessCounter to show the user how many guesses they have left
-            document.getElementById("history").innerHTML = ""; // Clear the guess history from previous rounds
-            document.getElementById("alert").innerHTML = ""; // Clear the alert for the new round
-            document.getElementById("guess").setAttribute("placeholder", `Your guess: ${MIN}-${MAX}`);
-            document.getElementById("inputLabel").innerHTML = `Your guess: ${MIN}-${MAX}`;
+            enableElement(SUBMIT_BTN_EL); // Re-enable the submit button in case it was disabled from an earlier round
+            enableElement(GUESS_EL); // Re-enable the input field in case it was disabled from an earlier round
+            RESET_BTN_EL.innerHTML = "Reset"; // Change the button label back to Reset from Play Again
+            GUESS_COUNTER_EL.innerHTML = guessesLeft; // Write the value of guessesLeft to paragraph with id=guessCounter to show the user how many guesses they have left
+            GUESS_EL.value = ""; // Clear the input box from previous rounds
+            HISTORY_EL.innerHTML = ""; // Clear the guess history from previous rounds
+            ALERT_EL.innerHTML = ""; // Clear the alert for the new round
+            GUESS_EL.setAttribute("placeholder", `Your guess: ${MIN}-${MAX}`); // Set the placeholder text in the input field to match the MIN and MAX constant
+            INPUT_LABEL_EL.innerHTML = `Your guess: ${MIN}-${MAX}`; // Set the input field label to match the MIN and MAX constant
             winningNumber = randomNumGen(MIN, MAX); // Call function randomNumGen and write the value it returns to variable winningNumber
+        }
+
+        //
+        // New function: disableElement()
+        //
+        //      Disables the element that the user puts in the parentheses.
+
+        function disableElement(toDisable) {
+            toDisable.disabled = true;
+        }
+    
+        //
+        // New function: enableElement()
+        //
+        //      Enables the element that the user puts in the parentheses.
+
+        function enableElement(toEnable) {
+            toEnable.disabled = false;
         }
 
         //
@@ -46,9 +85,9 @@
         //      Runs when the user clicks the submit button. It gets the value the user put into the input box and then calls another function to evaluate the guess.
 
         function guessSubmit() {
-            userGuess = document.getElementById("guess").value; // Retrieve the number the user put in the text box
+            userGuess = GUESS_EL.value; // Retrieve the number the user put in the text box
             evaluateGuess(userGuess); // Pass the user's guess to the evaluateGuess() function
-            document.getElementById("guess").value = ""; // Clear the input box to prepare it for the next guess
+            GUESS_EL.value = ""; // Clear the input box to prepare it for the next guess
         }
 
         //
@@ -61,40 +100,43 @@
             if (guess == '') { // If the user clicks submit without putting in a number...
                 return; // ...nothing happens. guessLeft isn't decremented and the history also remains unchanged.
             } else { 
-                if (guessesLeft > 0) { // If the user has more than 0 guesses remaining...
-                    if (guess >= MIN && guess <= MAX) { // If the user's guess is in the valid range of possible guesses...
-                        document.getElementById("guessCounter").innerHTML = --guessesLeft; // ...decrement guessLeft
+                if (guess >= MIN && guess <= MAX) { // If the user's guess is in the valid range of possible guesses...
+                    GUESS_COUNTER_EL.innerHTML = --guessesLeft; // ...decrement guessLeft
+                    if (guessesLeft == 0 && guess != winningNumber) { // If the user has no guesses left and didn't guess correctly...
+                        ALERT_EL.innerHTML = `You lose. The winning number was ${winningNumber}.`; // Update the paragraph with id=alert to tell the user they lost
+                        disableElement(SUBMIT_BTN_EL) // Disable the submit button so the user can't keep playing after they've lost
+                        disableElement(GUESS_EL) // Disable the input field so the user can't keep playing after they've lost
+                        RESET_BTN_EL.innerHTML = "Play Again"; // Change the Reset button label to Play Again
+                    } else {
                         if (guess > winningNumber) { // If the user's guess is higher than the winningNumber...
-                            document.getElementById("alert").innerHTML = `${guess} is too high!`; // Update the paragraph with id=alert to tell the user they guessed to high
-                            document.getElementById("history").innerHTML += `<br>${userGuess} (Too high!)`; // Update the paragraph with id=history and add the guess 
+                            ALERT_EL.innerHTML = `${guess} is too high!`; // Update the paragraph with id=alert to tell the user they guessed to high
+                            HISTORY_EL.innerHTML += `<br>${guess} (Too high!)`; // Update the paragraph with id=history and add the guess 
                         } else if (guess < winningNumber) { // If the user's guess is lower than the winningNumber...
-                            document.getElementById("alert").innerHTML = `${guess} is too low!`; // Update the paragraph with id=alert to tell the user they guessed to low
-                            document.getElementById("history").innerHTML += `<br>${userGuess} (Too low!)`; // Update the paragraph with id=history and add the guess 
-                        } else if (guess = winningNumber) { // If the user's guess is equal to the winningNumber...
-                            document.getElementById("alert").innerHTML = `You win! The winning number was ${winningNumber}.`; // Update the paragraph with id=alert to tell the user they guessed correctly
-                            document.getElementById("history").innerHTML += `<br>${userGuess} (Winner!)`; // Update the paragraph with id=history and add the guess 
-                            document.getElementById("resetBtn").innerHTML = "Play Again"; // Change the Reset button label to Play Again
+                            ALERT_EL.innerHTML = `${guess} is too low!`; // Update the paragraph with id=alert to tell the user they guessed to low
+                            HISTORY_EL.innerHTML += `<br>${guess} (Too low!)`; // Update the paragraph with id=history and add the guess 
+                        } else if (guess == winningNumber) { // If the user's guess is equal to the winningNumber...
+                            ALERT_EL.innerHTML = `You win! The winning number was ${winningNumber}.`; // Update the paragraph with id=alert to tell the user they guessed correctly
+                            HISTORY_EL.innerHTML += `<br>${guess} (Winner!)`; // Update the paragraph with id=history and add the guess
+                            disableElement(SUBMIT_BTN_EL) // Disable the submit button so the user can't keep playing after they've won
+                            disableElement(GUESS_EL) // Disable the input field so the user can't keep playing after they've won
+                            RESET_BTN_EL.innerHTML = "Play Again"; // Change the Reset button label to Play Again
                         } else { // If the user enters something other than a number...
-                        document.getElementById("alert").innerHTML = "Please enter a number."; // Update the paragraph with id=alert to tell the user to enter a number
+                        ALERT_EL.innerHTML = "Please enter a number."; // Update the paragraph with id=alert to tell the user to enter a number
                         }
-                    } else { // If the user's guess is not in the valid range of possible guesses...
-                        document.getElementById("alert").innerHTML = `Guess a number between ${MIN} and ${MAX}.`; // Update the paragraph with id=alert to tell the user the range of numbers they can guess
                     }
-                } else { // If the user has no guesses remaining...
-                    document.getElementById("alert").innerHTML = `You lose. The winning number was ${winningNumber}.`; // Update the paragraph with id=alert to tell the user they lost
-                    document.getElementById("submitBtn").disabled = true; // Disable the submit button so the user can't keep guessing after they've lost
-                    document.getElementById("resetBtn").innerHTML = "Play Again"; // Change the Reset button label to Play Again
+                } else { // If the user's guess is not in the valid range of possible guesses...
+                    ALERT_EL.innerHTML = `Guess a number between ${MIN} and ${MAX}.`; // Update the paragraph with id=alert to tell the user the range of numbers they can guess
                 }
             }
         }
-
+        
         //
         // New function: randomNumGen()
         //
         //      Generates a random number between the two parameters given.
-        
+
         function randomNumGen(min, max) {
-            return Math.floor(Math.random() * (max-min)) + min;
+            return Math.floor(Math.random() * (max-min + 1)) + min;
         }
     </script>
 </head>
@@ -112,13 +154,14 @@
             <p class="fs-1">Take a guess...</p>
             <div class="form-group">
                 <label for="guess" class="visually-hidden" id="inputLabel"></label>
-                <input type="number" class="form-control mb-4" id="guess" placeholder="">
+                <input type="number" class="form-control mb-4" id="guess" placeholder="" onKeyDown="if(event.key === 'Enter') guessSubmit();"> <!-- When the user hits enter, call the guessSubmit() function -->
             </div>
             <button class="btn btn-primary mb-4" id="submitBtn" onClick="guessSubmit();">Submit</button> <!-- When the user clicks the button, call the guessSubmit() function -->
             <div class="text-center">
                 <button class="btn btn-primary" id="resetBtn" onClick="init(); ">Reset</button> <!-- When the user clicks the button, call the init() function -->
             </div>
             <p class="fs-1" id="alert"></p>
+            <p class="fs-1" id="test"></p>
         </div>
         <div class="col-sm-4">
             <p class="fs-1">Guesses left:</p>
