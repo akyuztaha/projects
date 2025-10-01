@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JS Blink | Taha Akyuz</title>
+    <style>
+        .middle-row {
+            height: 7vh !important; /* Set the height of the whole row to match the height of the eyes */
+        }
+        .row {
+            height: 46.5vh; /* Set the other rows to fill the rest of the vertical area */
+        }
+        .col-custom {
+            width: 125px !important; /* Set the colums directly above and below the eyes to a custom width.
+                                        This value is arbitrary but it's the one I found to feel the most natural for where the eyes look according to your cursor. */
+        }
+    </style>
+    <script>
+        
+        // JS Blink
+        // Taha Akyuz
+        // Due 10/03/25
+        // This page shows two eyes that track the mouse cursor and also blink
+
+        // Initialize variables...
+        let currentImage = "img/forward.gif";
+
+        //
+        // New function: init()
+        //
+        //      This function runs when the page loads and it starts the timer for the blinking
+
+        function init() {
+            blinkTimer = setTimeout(blink, 1500); // Set a timeout of 1.5 seconds which will run blink()
+        }
+
+        //
+        // New function: blink()
+        //
+        //      This function clears the old timeout, updates the images to show the closed eyes. It then sets a new timeout of 500ms which will run unblink()
+
+        function blink() {
+            clearTimeout(blinkTimer); // Clear the old timeout
+            updateImages("img/closed.gif") // Update the images to show the closed eyes
+            unblinkTimer = setTimeout(unblink, 500); // Set a timeout of 500ms which will run unblink()
+        }
+
+        //
+        // New function: unblink()
+        //
+        //      This function clears the old timeout, updates the images to show the open eyes (in their previous position). It then circles back to init() to restart the blink cycle.
+
+        function unblink() {
+            clearTimeout(unblinkTimer); // Clear the old timeout
+            updateImages(currentImage); // Update the images to show the position they were showing before
+            init(); // Run init() to restart the blink cycle
+        }
+
+        //
+        // New function: updateImages(toSrc)
+        //
+        //      This function changes both imaged to the src passed to it as a parameter
+
+        function updateImages(toSrc) {
+            document.getElementById("img0").src = toSrc; // Set img0 to the new source
+            document.getElementById("img1").src = toSrc; // Set img1 to the new source
+        }
+
+        //
+        // New function: updateCurrentImage(option)
+        //
+        //      This function runs when the user moves their mouse over one of the divs. It updates the eyes to the matching position then updates the currentImage variable so the
+        //      eyes go back to that position after blinking.
+
+        function updateCurrentImage(option) {
+            currentImage = `img/${option}.gif`; // Update the value of currentImage to the new position
+            updateImages(currentImage); // Run updateImages with currentImage to update the eyes immediately
+        }
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  </head>
+  <body onLoad="init();"> <!-- When the page finished loading, run init() to get the blinking going. -->
+    <div class="container-fluid">
+        <div class="row text-center">
+            <div class="col" onMouseOver="updateCurrentImage('upLeft');"></div> <!-- When the user hovers over it, run updateCurrentImage with the position to move the eyes to -->
+            <div class="col-custom" onMouseOver="updateCurrentImage('up');"></div> <!-- When the user hovers over it, run updateCurrentImage with the position to move the eyes to -->
+            <div class="col" onMouseOver="updateCurrentImage('upRight');"></div> <!-- When the user hovers over it, run updateCurrentImage with the position to move the eyes to -->
+        </div>
+        <div class="row middle-row text-center">
+            <div class="col" onMouseOver="updateCurrentImage('left');"></div> <!-- When the user hovers over it, run updateCurrentImage with the position to move the eyes to -->
+            <div class="col-auto align-items-center justify-items-center" onMouseOver="updateCurrentImage('forward');"> <!-- When the user hovers over it, run updateCurrentImage with the position to move the eyes to -->
+                <img src="img/forward.gif" class="img-fluid" id="img0">
+                <img src="img/forward.gif" class="img-fluid" id="img1">
+            </div>
+            <div class="col" onMouseOver="updateCurrentImage('right');"></div> <!-- When the user hovers over it, run updateCurrentImage with the position to move the eyes to -->
+        </div>
+        <div class="row">
+            <div class="col" onMouseOver="updateCurrentImage('downLeft');"></div> <!-- When the user hovers over it, run updateCurrentImage with the position to move the eyes to -->
+            <div class="col-custom" onMouseOver="updateCurrentImage('down');"></div> <!-- When the user hovers over it, run updateCurrentImage with the position to move the eyes to -->
+            <div class="col" onMouseOver="updateCurrentImage('downRight');"></div> <!-- When the user hovers over it, run updateCurrentImage with the position to move the eyes to -->
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  </body>
+</html>

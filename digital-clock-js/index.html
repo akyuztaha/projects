@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Digital Clock | Taha Akyuz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script>
+
+        // JavaScript Digital Clock
+        // Taha Akyuz
+        // Due 9/29/25
+        // This webpage shows the current time and date. The user has the option to change the clock between a 24hr clock and a 12hr clock. They can also set an alarm.
+
+
+        // Initialize variables...
+        let twelveHrClock = 0; // 0 if the user is using 24hr clock, 1 if they're using 12hr clock
+        let currentHour = 0; // The current hour
+        let currentMinute = 0; // The current minute
+        let currentSecond = 0; // The current second
+        let currentMonth = 0; // The current month
+        let currentDate = 0; // The current date
+        let currentYear = 0; // The current year
+        let currentDay = 0; // The current day
+        let alarmHour = ""; // The hour for when the alarm will go off
+        let alarmMinute = ""; // The minute for when the alarm will go off
+        let date = 0; // This variable will be used to get the date values
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] // Since date.getDay returns a number between 0 an 6, I put all the days into an array, indexed 0-6
+
+        //
+        // New function: init()
+        //
+        //      This function runs when the page finished loading. It starts an intrval of one second, which will run the updateAndCheck() function. It also disables the stop/cancel alarm button.
+
+        function init() {
+            updateInterval = setInterval(updateAndCheck, 1000); // Set a new interval. Run updateAndCheck() every second.
+            document.getElementById("stopButton").disabled = true; // Disable stop/cancel button.
+        }
+
+        //
+        // New function: updateTime()
+        //
+        //      This function is what updates the date values every second. It also pads single digit numbers with a zero at the beginning. It checks to see if the user is using 12 hour time.
+        //      If they are, it adds AM and PM and also adjust the hour value accordingly.
+
+        function updateTime() {
+            date = new Date(); // Get the new time every second
+            currentHour = date.getHours().toString().padStart(2, '0'); // Get current hour value, pad single digit values with a zero at the beginning, and assign to variable
+            currentMinute = date.getMinutes().toString().padStart(2, '0'); // Get current minute value, pad single digit values with a zero at the beginning, and assign to variable
+            currentSecond = date.getSeconds().toString().padStart(2, '0'); // Get current second value, pad single digit values with a zero at the beginning, and assign to variable
+            currentMonth = (date.getMonth() + 1).toString().padStart(2, '0'); // Get current month value, pad single digit values with a zero at the beginning, and assign to variable
+            currentDate = date.getDate().toString().padStart(2, '0'); // Get current date value, pad single digit values with a zero at the beginning, and assign to variable
+            currentYear = date.getFullYear(); // Get current year value and assign to variable
+            currentDay = date.getDay(); // // Get current day value and assign to variable
+            document.getElementById("timeDisplay").innerHTML = `${currentHour}:${currentMinute}:${currentSecond}`; // Write the current hour, minute, and second to the time display
+            document.getElementById("dayDisplay").innerHTML = days[currentDay]; // Use the value of currentDay as index for the array with all the days in it, then write it to the day display
+            document.getElementById("dateDisplay").innerHTML = `${currentMonth}/${currentDate}/${currentYear}`; // Write the current month, date, and year to the date display
+            if (twelveHrClock == 1 && date.getHours() > 12) { // If the user is using 12hr clock and the time is above 12 hours...
+                currentHour = (date.getHours() - 12).toString().padStart(2, '0'); // Subtract 12 from the 24hr time to get 12hr time
+                document.getElementById("timeDisplay").innerHTML = `${currentHour}:${currentMinute}:${currentSecond} PM`; // Write new 12hr time to time display along with "PM"
+            } else if (twelveHrClock == 1 && date.getHours() == 12) { // If the user is using 12hr clock and the time is at 12 hours...
+                document.getElementById("timeDisplay").innerHTML += " PM"; // Append "PM" to the end of the time
+            } else if (twelveHrClock == 1 && date.getHours() < 12) { // If the user is using 12hr clock and the time is below 12 hours...
+                document.getElementById("timeDisplay").innerHTML += " AM"; // Append "AM" to the end of the time
+            } else { // If the user isn't using 12hr clock
+                return; // Do nothing
+            }
+        }
+
+        //
+        // New function: checkAlarm()
+        //
+        //      This function checks if the alarm time set by the user matches the current time
+
+        function checkAlarm() {
+            if (currentHour == alarmHour && currentMinute == alarmMinute) { // If the alarm time and current time match...
+                document.getElementById("body").style = "background-color: red;"; // Set the background color of the body to red
+                document.getElementById("stopButton").innerHTML = "Stop alarm"; // Change the label of the buttom from cancel to stop alarm to match context
+            } else { // If the alarm time and current time don't match...
+                return; // Do nothing
+            }
+        }
+
+        //
+        // New function: toggleTwelveHr()
+        //
+        //      This function runs when the user clicks the Use Xhr clock button. It changes the value of twelveHrClock so the program knows which mode the user is in.
+
+        function toggleTwelveHr() {
+            if (twelveHrClock == 0) { // If the user is in 24hr mode and clicks the button...
+                twelveHrClock = 1; // Switch to 12hr mode
+                document.getElementById("toggleButton").innerHTML = "Use 24hr clock"; // Change the button label to match context
+            } else { // If the user is in 12hr mode and clicks the button...
+                twelveHrClock = 0; // Switch to 24hr mode
+                document.getElementById("toggleButton").innerHTML = "Use 12hr clock"; // Change the button label to match context
+            }
+        }
+
+        //
+        // New function: stopClicked()
+        //
+        //      This function runs when the user clicks the stop button. It stops or cancels the alarm.
+
+        function stopClicked() {
+            document.getElementById('body').style = 'background-color: white;'; // Set the background abck to white
+            document.getElementById('stopButton').disabled = true; // Disable the stop button
+            document.getElementById('setButton').disabled = false; // Re-enable the set button
+            alarmHour = ""; // Clear the alarmHour variable
+            alarmMinute = ""; // Clear the alarmMinute variable
+            document.getElementById("hoursField").disabled = false; // Re-enable the hoursField
+            document.getElementById("minutesField").disabled = false; // Re-enable the minutesField
+            document.getElementById("alarmDisplay").innerHTML = "No alarm set"; // Change the alarm display back to no alarm warning
+            document.getElementById("stopButton").innerHTML = "Cancel alarm"; // Change the stop button back to cancel to match context
+        }
+
+        //
+        // New function: setClicked()
+        //
+        //      This funtion runs when the user clicks the set alarm button. It formats the user's input and sets the alarm variables
+
+        function setClicked() {
+            if (document.getElementById("hoursField").value == "" || document.getElementById("minutesField").value == "") { // If the user leaves either one of the fields empty...
+                return; // Do nothing
+            } else if (document.getElementById("hoursField").value > 23 || document.getElementById("hoursField").value < 0 || document.getElementById("minutesField").value > 59 || document.getElementById("hoursField").value < 0) { // If the user goes beyond the acceptable ranges for either field...
+                document.getElementById("hoursField").value = ""; // Clear their input
+                document.getElementById("minutesField").value = ""; // Clear their input
+            } else { // If the user puts a number in both fields and stays within valid ranges...
+                if (twelveHrClock == 1 && Number(alarmHour) > 12) { // If the user is using 12hr mode and inputs a number greater than 12
+                    alarmHour = (Number(alarmHour) - 12).toString().padStart(2, '0'); // Format their input to match the format of the clock
+                } else {
+                    alarmHour = document.getElementById("hoursField").value.toString().padStart(2, '0'); // Format their hour input to match the format of the clock and assign it to alarmHour variable
+                    alarmMinute = document.getElementById("minutesField").value.toString().padStart(2, '0'); // Format their minute input to match the format of the clock and assign it to alarmMinute variable
+                }
+            document.getElementById("hoursField").value = ""; // Clear their input
+            document.getElementById("minutesField").value = ""; // Clear their input
+            document.getElementById("stopButton").disabled = false; // Enable the cancel/stop button
+            document.getElementById("setButton").disabled = true; // Disable the set button
+            document.getElementById("hoursField").disabled = true; // Disable input fields
+            document.getElementById("minutesField").disabled = true; // Disable input fields
+            document.getElementById("alarmDisplay").innerHTML = `${alarmHour}:${alarmMinute}`; // Change the alarm display to show the time the user has set an alarm for
+            }
+        }
+
+        //
+        // New function: updateAndCheck()
+        //
+        //      This function simply combines two functions: updateTime() and checkAlarm(), as they both need to be ran every second by the interval.
+
+        function updateAndCheck() {
+            updateTime();
+            checkAlarm();
+        }
+    </script>
+</head>
+
+<body onLoad="init()" id="body"> <!-- When the page finished loading, run init() -->
+    <div class="p-5 bg-primary text-white text-center">
+        <h1>JavaScript Digital Clock</h1>
+        <h2>Taha Akyuz</h2>
+    </div>
+    <div class="row text-center">
+        <div class="col-sm-4">
+            <p class="display-5 mt-2 fst-italic">Current Time and Date</p>
+        </div>
+        <div class="col-sm-4">
+            <p class="display-5 mt-2 fst-italic">Alarm</p>
+        </div>
+        <div class="col-sm-4">
+            <p class="display-5 mt-2 fst-italic">Options</p>
+        </div>
+    </div>
+    <div class="row text-center">
+        <div class="col-sm-4">
+            <p id="timeDisplay" class="display-3 fw-bold">00:00:00</p>
+            <p id="dayDisplay" class="display-4">...</p>
+            <p id="dateDisplay" class="display-4">00/00/0000</p>
+        </div>
+        <div class="col-sm-4">
+            <p class="display-3 fw-bold" id="alarmDisplay">No alarm set</p>
+            <button id="stopButton" class="btn btn-primary mt-2" onClick="stopClicked()">Cancel alarm</button> <!-- When the user clicks the cancel/stop button, run stopClicked() -->
+        </div>
+        <div class="col-sm-4 mt-2">
+            <button id="toggleButton" class="btn btn-primary" onClick="toggleTwelveHr()">Use 12hr clock</button> <!-- When the user clicks the Use Xhr clock button, run toggleTwelveHr() -->
+        </div>
+    </div>
+    <div class="row text-center">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <p class="display-5 mt-2 fst-italic">Set alarm:</p>
+            <div class="input-group">
+                <input type="number" min="0" max="23" class="form-control" placeholder="Hours (0-23)" id="hoursField">
+                <span class="input-group-text">:</span>
+                <input type="number" min="0" max="59" class="form-control" placeholder="Minutes (0-59)" id="minutesField">
+            </div>
+            <button class="btn btn-primary mt-3" id="setButton" onClick="setClicked()">Set alarm</button> <!-- When the user clicks the set button, run setClicked() -->
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

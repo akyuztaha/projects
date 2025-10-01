@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Running Man | Taha Akyuz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script>
+
+        // JavaScript Running Man
+        // Taha Akyuz
+        // Due 9/26/25
+        // This is a Bootstrap webpage that shows 1 image that is constantly cylcing through pictures of a sprite running.
+        // You can start or stop the "animation," and you can also make it run (cycle images) faster or slower.
+
+        // Initialize variables...
+        let runInterval = 500;
+        let currentImage = 1;
+        let toggleState = 0;
+        let imgTimer = 0;
+        
+        //
+        // New function: setToggleState()
+        //
+        //      This function runs when the user clicks the Start / Stop button. It checks the current state of the button and then toggles the value of the toggleState variable. Then it runs the
+        //      manageTimeout() function.
+
+        function setToggleState() {
+            if (toggleState == 0) {
+                toggleState = 1; // Toggle the value of toggleState
+                document.getElementById("toggleBtn").innerHTML = "Stop"; // Change the text of the Start / Stop button to match the action it'll perform
+            } else {
+                toggleState = 0; // Toggle the value of toggleState
+                document.getElementById("toggleBtn").innerHTML = "Start"; // Change the text of the Start / Stop button to match the action it'll perform
+            }
+            manageTimeout(); // Run function manageTimeout
+        }
+
+        //
+        // New function: manageTimeout()
+        //
+        //      This function checks the state of the toggle. If it's set to 1 (started,) it starts a timer for the sprite to update. Otherwise, it clears the timer.
+
+        function manageTimeout() {
+            if (toggleState == 1) {
+                imgTimer = setTimeout(incrementImg, runInterval); // Start a new timer that'll run incrementImg(). The interval will be the value of runInterval.
+            } else {
+                clearTimeout(imgTimer); // Clear the timer if the user hit the Stop button.
+            }
+        }
+
+        //
+        // New function: incrementImg()
+        //
+        //      This function is called by the timer. It updates the image based on the value of currentImage, then increments currentImage. Then it clears the timer and calls resetCurrentImage,
+        //      which will make sure the value of resetCurrentImage stays within the range so the images keep looping. Finally, it calls manageTimeout() to keep everything going. 
+
+        function incrementImg() {
+            document.getElementById("spriteImg").src = `img/${currentImage++}.png`; // Update the image with the new image then increment variable currentImage
+            clearTimeout(imgTimer); // Clear the timer
+            resetCurrentImage(); // Call resetCurrentImage() so the images keeps looping
+            manageTimeout(); // Go back to manageTimeout() to keep looping
+        }
+
+        //
+        // New function: resetCurrentImage()
+        //
+        //      This function will reset the value of currentImage to 1 when it hits 8. This will make sure the sprite keeps looping
+
+        function resetCurrentImage() {
+            if (currentImage == 8) {
+                currentImage = 1;
+            } else {
+                return; // Don't do anything if currentImage is already withing the correct range
+            }
+        }
+
+        //
+        // New function: changeSpeed(option)
+        //
+        //      This function is called when the user hits the faster or slower button. It takes the options 'faster' or 'slower' as a parameter. If it's faster, decrease the runInterval by 100ms.
+        //      If it's slower, increase the runInterval by 100ms. It also makes sure that the intevral stays between 100 and 1000ms.
+
+        function changeSpeed(option) {
+            if (option == "faster" && runInterval > 100) {
+                runInterval -= 100; // Decrease runInterval by 100
+                document.getElementById("intervalDisplay").innerHTML = runInterval; // Update the intervalDisplay element so the user can see the new interval.
+            } else if (option == "slower" && runInterval < 1000) {
+                runInterval += 100; // Increase runInterval by 100
+                document.getElementById("intervalDisplay").innerHTML = runInterval; // Update the intervalDisplay element so the user can see the new interval.
+            } else {
+                console.log("Either an invalid parameter was used with the changeSpeed() function (use 'faster' or 'slower',) or you've hit the minimum/maximum speed.");
+                return; // If the user tries decreasing below or increasing above the interval limits, the function returns without changing the speed.
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+    <div class="p-5 bg-primary text-white text-center">
+        <h1>JavaScript Running Man</h1>
+        <h2>Taha Akyuz</h2>
+    </div>
+    <div class="row text-center">
+        <div class="col-sm-4">
+            <img class="img-fluid mt-4" id="spriteImg" src="img/1.png">
+        </div>
+        <div class="col-sm-4 btn-group-vertical">
+            <button class="btn btn-primary mt-4" onClick="changeSpeed('faster');">Run faster!</button> 
+            <button class="btn btn-primary mt-1" id="toggleBtn" onClick="setToggleState();">Start</button>
+            <button class="btn btn-primary mt-1" onClick="changeSpeed('slower');">Run slower!</button>
+        </div>
+        <div class="col-sm-4 text-center">
+            <p class="display-6 mb-0 mt-4 fst-italic">Interval (ms):</p>
+            <p id="intervalDisplay" class="display-2 fw-bold">500</p>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JS Tic Tac Toe | Taha Akyuz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script>
+
+        // JS Tic Tac Toe
+        // Taha Akyuz
+        // Due 09/30/25
+        // This is a Tic Tac Toe game made with Bootstrap and JavaScript.
+
+        // Initializing variables...
+        const boardValues = [null, null, null, null, null, null, null, null, null];
+        const winningCombos = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+        let playerTurn = "X";
+        let gameOver = false;
+
+        //
+        // New function: reset();
+        //
+        //      Sets all values back to their original state for a new game
+
+        function reset() {
+            boardValues.fill(null); // Resets all cell values to null
+            playerTurn = "X"; // Sets player turn back to X
+            gameOver = false; // Sets gameOver back to false so cells can be clicked again
+            updateBoard(); // Run updateBoard to refresh the cells
+        }
+
+        //
+        // New function: updateBoard();
+        //
+        //      Updates the board cells and runs checkWin
+
+        function updateBoard() {
+            document.getElementById("turnDisplay").innerHTML = `It's player ${playerTurn}'s turn.`; // Updates turn display to show whose turn it is
+            for (let i = 0; i < 9; i++) { // Loops through each cell
+                document.getElementById(`cell${i}`).src = `img/${boardValues[i]}.png`; // Updates each cell image based on its matching value in the array (X, O, or null)
+            }
+            checkWin(boardValues); // Run checkWin to see if there's a winner
+        }
+
+        //
+        // New function: checkWin(board);
+        //
+        //      Checks the board for a winning combination
+
+        function checkWin(board) {
+            for (let i = 0; i < winningCombos.length; i++) { // Loops through each winning combination
+                const [a, b, c] = winningCombos[i]; // Split the three values of the current winning combination into a, b, and c
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) { // Checks if the values at a, b, and c are the same
+                    document.getElementById("turnDisplay").innerHTML = `Player ${board[a]} won!`; // Tells the user who won
+                    gameOver = true; // Sets gameOver to true so cells can no longer be clicked
+                    return;
+                }
+            }
+            checkTie(); // No winner yet, check for a tie
+        }
+
+        //
+        // New function: checkTie();
+        //
+        //      This function checks if every slot is full. If there's no winner and every cell is full, it's a tie.
+
+        function checkTie() {
+            if (boardValues.includes(null)) { // If there are still empty cells
+                return; // No tie, do nothing
+            } else { // If all cells are full
+                document.getElementById("turnDisplay").innerHTML = "It's a tie."; // Tells the user there's a tie
+                gameOver = true; // Sets gameOver to true so cells can no longer be clicked
+            }
+        }
+
+        //
+        // New function: cellClicked(cellNum);
+        //
+        //      Handles cell clicks, updates board values, and switches player turns
+
+        function cellClicked(cellNum) {
+            if (gameOver == false) { // Only allow clicks if game is not over
+                boardValues[cellNum] = playerTurn; // Sets the clicked cell's value to the current player's symbol (X or O)
+                if (playerTurn == "X") {
+                    playerTurn = "O"; // If current player is X, switch to O
+                } else {
+                    playerTurn = "X"; // If current player is O, switch to X
+                }
+                updateBoard(); // Run updateBoard to refresh the cells
+            } else {
+                return; // Game is over, do nothing
+            }
+        }
+    </script>
+</head>
+<body onLoad="reset();"> <!-- Run the reset() function when the page loads to set up the game -->
+    <div class="container display-1 mt-4 text-center">
+        <div class="row">
+            <div class="col-3 mb-5"></div>
+            <div class="col-2 border-end border-dark">
+                <img id="cell0" src="img/null.png" class="img-fluid" onClick="cellClicked(0);"> <!-- Runs the cellClicked() function with its corresponding cell number -->
+            </div>
+            <div class="col-2 border-end border-dark">
+                <img id="cell1" src="img/null.png" class="img-fluid" onClick="cellClicked(1);"> <!-- Runs the cellClicked() function with its corresponding cell number -->
+            </div>
+            <div class="col-2">
+                <img id="cell2" src="img/null.png" class="img-fluid" onClick="cellClicked(2);"> <!-- Runs the cellClicked() function with its corresponding cell number -->
+            </div>
+            <div class="col-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6">
+                <hr class="border-3 opacity-100">
+            </div>
+            <div class="col-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-3 mb-5"></div>
+            <div class="col-2 border-end border-dark">
+                <img id="cell3" src="img/null.png" class="img-fluid" onClick="cellClicked(3);"> <!-- Runs the cellClicked() function with its corresponding cell number -->
+            </div>
+            <div class="col-2 border-end border-dark">
+                <img id="cell4" src="img/null.png" class="img-fluid" onClick="cellClicked(4);"> <!-- Runs the cellClicked() function with its corresponding cell number -->
+            </div>
+            <div class="col-2">
+                <img id="cell5" src="img/null.png" class="img-fluid" onClick="cellClicked(5);"> <!-- Runs the cellClicked() function with its corresponding cell number -->
+            </div>
+            <div class="col-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6">
+                <hr class="border-3 opacity-100">
+            </div>
+            <div class="col-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-3 mb-5"></div>
+            <div class="col-2 border-end border-dark">
+                <img id="cell6" src="img/null.png" class="img-fluid" onClick="cellClicked(6);"> <!-- Runs the cellClicked() function with its corresponding cell number -->
+            </div>
+            <div class="col-2 border-end border-dark">
+                <img id="cell7" src="img/null.png" class="img-fluid" onClick="cellClicked(7);"> <!-- Runs the cellClicked() function with its corresponding cell number -->
+            </div>
+            <div class="col-2">
+                <img id="cell8" src="img/null.png" class="img-fluid" onClick="cellClicked(8);"> <!-- Runs the cellClicked() function with its corresponding cell number -->
+            </div>
+            <div class="col-3"></div>
+        </div>
+    </div>
+    <div class="container mt-5 text-center">
+        <h2 id="turnDisplay">It's player X's turn.</h2>
+    </div>
+    <div class="container mt-3 text-center">
+        <button class="btn btn-primary" onClick="reset();">Reset</button> <!-- Runs the reset() function when clicked -->
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>
